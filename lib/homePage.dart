@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teste/appWidget.dart';
+import 'package:teste/widgets/bottomNav.dart';
+import 'package:teste/widgets/cursoPorcentagem.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,8 +13,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
+    return MainPage(
       body: Center(
         child: SizedBox(
           width: MediaQuery.sizeOf(context).width,
@@ -32,10 +33,7 @@ class _HomePageState extends State<HomePage> {
                       _itemCurso('Matematica', 0.7),
                       _itemCurso('Matematica', 0.7),
                       _itemCurso('Matematica', 0.7),
-                      _itemCurso('Matematica', 0.7),
-
-
-                      
+                      _itemCurso('Matematica', 0.7),                      
                     ],
                   ),
 
@@ -57,7 +55,7 @@ class _HomePageState extends State<HomePage> {
           ),
         )
       ),
-    );
+      paginaAtual: 0);
   }
 }
 
@@ -83,3 +81,49 @@ Widget _itemCurso(String nome, double porcentagem) {
     ],
   );
 }
+
+
+// Scaffold(
+//       appBar: AppBar(),
+//       body: Center(
+//         child: SizedBox(
+//           width: MediaQuery.sizeOf(context).width,
+//           height: MediaQuery.sizeOf(context).height,
+
+//           child: Column(
+//             mainAxisAlignment: MainAxisAlignment.start,
+//             children: [
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+//                 children: [
+//                   Column(
+//                     mainAxisAlignment: MainAxisAlignment.start,
+//                     children: [
+//                       _itemCurso('Matematica', 0.7),
+//                       _itemCurso('Matematica', 0.7),
+//                       _itemCurso('Matematica', 0.7),
+//                       _itemCurso('Matematica', 0.7),
+//                       _itemCurso('Matematica', 0.7),
+//                       _itemCurso('Matematica', 0.7),                      
+//                     ],
+//                   ),
+
+//                   Column(
+//                     mainAxisAlignment: MainAxisAlignment.start,
+//                     children: [
+//                       _itemCurso('Matematica', 0.7),
+//                       _itemCurso('Matematica', 0.7),
+//                       _itemCurso('Matematica', 0.7),
+//                       _itemCurso('Matematica', 0.7),
+//                       _itemCurso('Matematica', 0.7),
+//                       _itemCurso('Matematica', 0.7),
+
+//                     ],
+//                   )
+//                 ],
+//               )
+//             ],
+//           ),
+//         )
+//       ),
+//     );
