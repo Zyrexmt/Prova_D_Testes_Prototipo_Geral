@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teste/variaveis.dart';
+import 'package:teste/global/variaveis.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({
@@ -23,6 +23,8 @@ class MainPage extends StatelessWidget {
       body: body,
       floatingActionButton: floatingActionButton,
       bottomNavigationBar: BottomNavigationBar(
+        showUnselectedLabels: false,
+        showSelectedLabels: false,
         currentIndex: paginaAtual,
         backgroundColor: corClara,
         selectedItemColor: corRoxoClaro,
@@ -37,26 +39,39 @@ class MainPage extends StatelessWidget {
             case 1:
               Navigator.of(
                 context,
-              ).pushReplacementNamed('/professores');
+              ).pushReplacementNamed('/teachers');
               break;
             case 2:
               Navigator.of(
                 context,
-              ).pushReplacementNamed('/relatorios');
+              ).pushReplacementNamed('/reports');
               break;
           }
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.menu_book),
+            icon: Opacity(opacity: paginaAtual == 0 ? 0.5 : 1.0,
+            child: Image.asset('assets/images/cursos.png',
+            width: 70,
+            height: 70,)),
             label: 'Cursos'
             ),
             BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Opacity(
+              opacity: paginaAtual == 1 ? 0.5 : 1.0,
+              child: Image.asset('assets/images/profs.png',
+              width: 70,
+              height: 70,),
+            ),
             label: 'Professores'
             ),
             BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
+            icon: Opacity(
+              opacity: paginaAtual == 2 ? 0.5 : 1.0,
+              child: Image.asset('assets/images/relatorios.png',
+              width: 70,
+              height: 70,),
+            ),
             label: 'Relatórios'
             ),
         ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:teste/homePage.dart';
+import 'package:teste/pages/homePage.dart';
+import 'package:teste/pages/teacherPage.dart';
 
 class AppController extends StatelessWidget {
   const AppController({super.key});
@@ -12,8 +13,12 @@ class AppController extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
       debugShowCheckedModeBanner: false,
-      routes: {'/': (context) => const HomePage()},
-      initialRoute: '/',
+      routes: {
+        '/home': (context) => const HomePage(),
+        '/teachers': (context) => const TeacherPage(),
+
+        },
+      initialRoute: '/home',
     );
   }
 }

@@ -10,7 +10,7 @@ class ArcoPorcentagem extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 - 8;
+    final radius = size.width / 2 - 4;
 
     final paint = Paint()
       ..color = Colors.grey.shade300
