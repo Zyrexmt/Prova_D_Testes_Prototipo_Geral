@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:teste/appWidget.dart';
+import 'package:teste/global/variaveis.dart';
 import 'package:teste/widgets/bottomNav.dart';
 import 'package:teste/widgets/cursoPorcentagem.dart';
 
@@ -14,6 +15,40 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int isListed = 0;
+
+  void modal() {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Informações'),
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.close),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Curso:\nMatematica'),
+              SizedBox(height: 10),
+              Text('Descricao:\nCursos de calculos'),
+              SizedBox(height: 10),
+              Text('Incritos:\n10'),
+              SizedBox(height: 10),
+              Text('Ativos:\n8'),
+              SizedBox(height: 10),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,57 +115,143 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               SizedBox(height: 30),
-              isListed == 0 ?
-              Flexible(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment:
-                            MainAxisAlignment.spaceAround,
-                        children: [
-                          Column(
-                            mainAxisAlignment:
-                                MainAxisAlignment.start,
-                            children: [
-                              _itemCursoCard('Matematica', 0.7),
-                              _itemCursoCard('Matematica', 0.7),
-                              _itemCursoCard('Matematica', 0.7),
-                              _itemCursoCard('Matematica', 0.7),
-                              _itemCursoCard('Matematica', 0.7),
-                              _itemCursoCard('Matematica', 0.7),
-                            ],
-                          ),
+              isListed == 0
+                  ? Flexible(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceAround,
+                              children: [
+                                Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () => modal(),
+                                      child: _itemCursoCard(
+                                        'Matematica',
+                                        0.7,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => modal(),
+                                      child: _itemCursoCard(
+                                        'Matematica',
+                                        0.7,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => modal(),
+                                      child: _itemCursoCard(
+                                        'Matematica',
+                                        0.7,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => modal(),
+                                      child: _itemCursoCard(
+                                        'Matematica',
+                                        0.7,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => modal(),
+                                      child: _itemCursoCard(
+                                        'Matematica',
+                                        0.7,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => modal(),
+                                      child: _itemCursoCard(
+                                        'Matematica',
+                                        0.7,
+                                      ),
+                                    ),
+                                  ],
+                                ),
 
-                          Column(
-                            mainAxisAlignment:
-                                MainAxisAlignment.start,
-                            children: [
-                              _itemCursoCard('Matematica', 0.7),
-                              _itemCursoCard('Matematica', 0.7),
-                              _itemCursoCard('Matematica', 0.7),
-                              _itemCursoCard('Matematica', 0.7),
-                              _itemCursoCard('Matematica', 0.7),
-                              _itemCursoCard('Matematica', 0.7),
-                            ],
-                          ),
-                        ],
+                                Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () => modal(),
+                                      child: _itemCursoCard(
+                                        'Matematica',
+                                        0.7,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => modal(),
+                                      child: _itemCursoCard(
+                                        'Matematica',
+                                        0.7,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => modal(),
+                                      child: _itemCursoCard(
+                                        'Matematica',
+                                        0.7,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => modal(),
+                                      child: _itemCursoCard(
+                                        'Matematica',
+                                        0.7,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => modal(),
+                                      child: _itemCursoCard(
+                                        'Matematica',
+                                        0.7,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => modal(),
+                                      child: _itemCursoCard(
+                                        'Matematica',
+                                        0.7,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              )
-              : Flexible(
-                child: Column(
-                  children: [_itemCursoList('Matematica', 1.0)],
-                ),
-              ),
+                    )
+                  : Flexible(
+                      child: Column(
+                        children: [GestureDetector(
+                          onTap: () => modal(),
+                          child: _itemCursoList('Matematica', 1.0))],
+                      ),
+                    ),
             ],
           ),
         ),
       ),
       paginaAtual: 0,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        backgroundColor: Colors.white,
+        child: SizedBox(
+          width: 70,
+          height: 70,
+          child: Container(
+            margin: EdgeInsets.all(5),
+            child: Image.asset('assets/images/mais.png'),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -167,46 +288,49 @@ Widget _itemCursoCard(String nome, double porcentagem) {
 }
 
 Widget _itemCursoList(String nome, double porcentagem) {
-  return Padding(
-    padding: EdgeInsetsGeometry.all(10),
-    child: Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.horizontal(),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 80,
-              height: 80,
-              child: ClipOval(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    CustomPaint(
-                      painter: ArcoPorcentagem(
-                        porcentagem: porcentagem,
-                      ),
-                      size: Size(80, 980),
+  return Container(
+    decoration: BoxDecoration(
+      border: Border.all(color: Colors.black),
+      borderRadius: BorderRadius.horizontal(),
+    ),
+    child: Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            height: 80,
+            child: ClipOval(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CustomPaint(
+                    painter: ArcoPorcentagem(
+                      porcentagem: porcentagem,
                     ),
-                    Text(
-                      '${(porcentagem * 100).toInt()}%',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold
-                      ),
+                    size: Size(80, 980),
+                  ),
+                  Text(
+                    '${(porcentagem * 100).toInt()}%',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(width: 25,),
-            Text('Matematica', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-          ],
-        ),
+          ),
+          SizedBox(width: 25),
+          Text(
+            'Matematica',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     ),
   );
