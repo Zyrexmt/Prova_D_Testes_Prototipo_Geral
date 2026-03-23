@@ -230,9 +230,12 @@ class _HomePageState extends State<HomePage> {
                     )
                   : Flexible(
                       child: Column(
-                        children: [GestureDetector(
-                          onTap: () => modal(),
-                          child: _itemCursoList('Matematica', 1.0))],
+                        children: [
+                          GestureDetector(
+                            onTap: () => modal(),
+                            child: _itemCursoList('Matematica', 1.0),
+                          ),
+                        ],
                       ),
                     ),
             ],
@@ -241,7 +244,9 @@ class _HomePageState extends State<HomePage> {
       ),
       paginaAtual: 0,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).pushReplacementNamed('/curso');
+        },
         backgroundColor: Colors.white,
         child: SizedBox(
           width: 70,
