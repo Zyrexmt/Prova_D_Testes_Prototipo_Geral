@@ -49,7 +49,7 @@ class _CursoCreateState extends State<CursoCreate> {
   String? valorSelecionado;
   String? valorSelecionado2;
 
-  bool quemsabe = false;
+  bool visivel = false;
 
   @override
   Widget build(BuildContext context) {
@@ -154,9 +154,11 @@ class _CursoCreateState extends State<CursoCreate> {
                         Switch(
                           activeColor: corRoxoClaro,
                           inactiveTrackColor: corClara,
-                          value: false,
+                          value: visivel,
                           onChanged: (value) {
-                            print('ok');
+                            setState(() {
+                              visivel = value;
+                            });
                           },
                         ),
                       ],
@@ -188,15 +190,29 @@ class _CursoCreateState extends State<CursoCreate> {
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: corClara,
-                                suffixIcon: IconButton(
-                                  onPressed: () {},
-                                  icon: Icon(Icons.calendar_month),
+                                suffixIcon: Icon(
+                                  Icons.calendar_month,
                                 ),
                                 border: OutlineInputBorder(
                                   borderRadius:
                                       BorderRadius.horizontal(),
                                 ),
                               ),
+                              onTap: () async {
+                                final data = await showDatePicker(
+                                  context: context,
+                                  firstDate: DateTime(2026),
+                                  lastDate: DateTime(2050),
+                                );
+                                if (data != null) {
+                                  dataInicioController.text = data
+                                      .toString()
+                                      .split(' ')
+                                      .first;
+                                  dataInicio = data.toString();
+                                  setState(() {});
+                                }
+                              },
                             ),
                           ],
                         ),
@@ -213,25 +229,37 @@ class _CursoCreateState extends State<CursoCreate> {
                           children: [
                             Container(
                               width: double.infinity,
-                              child: Text(
-                                'Data inicío',
-                                style: regular,
-                              ),
+                              child: Text('Data fim', style: regular),
                             ),
                             TextField(
-                              controller: dataInicioController,
+                              controller: dataFimController,
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: corClara,
-                                suffixIcon: IconButton(
-                                  onPressed: () {},
-                                  icon: Icon(Icons.calendar_month),
+                                suffixIcon: Icon(
+                                  Icons.calendar_month,
                                 ),
                                 border: OutlineInputBorder(
                                   borderRadius:
                                       BorderRadius.horizontal(),
                                 ),
                               ),
+                              onTap: () async {
+                                final data = await showDatePicker(
+                                  context: context,
+                                  firstDate: DateTime(2026),
+                                  lastDate: DateTime(2050),
+                                );
+
+                                if (data != null) {
+                                  dataFimController.text = data
+                                      .toString()
+                                      .split(' ')
+                                      .first;
+                                  dataFim = data.toString();
+                                  setState(() {});
+                                }
+                              },
                             ),
                           ],
                         ),
@@ -311,6 +339,44 @@ class _CursoCreateState extends State<CursoCreate> {
                     ],
                   ),
                 ),
+                SizedBox(height: 10),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {},
+                      style: TextButton.styleFrom(
+                        backgroundColor: corRoxoEscuro,
+                        foregroundColor: corClara,
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadiusGeometry.horizontal(),
+                        ),
+                        fixedSize: Size(70, 40),
+                      ),
+                      child: Text('Salvar', style: regular),
+                    ),
+
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(
+                          context,
+                        ).pushReplacementNamed('/home');
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: corRoxoEscuro,
+                        foregroundColor: corClara,
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadiusGeometry.horizontal(),
+                        ),
+                        fixedSize: Size(70, 40),
+                      ),
+                      child: Icon(Icons.close, weight: 30),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -322,9 +388,7 @@ class _CursoCreateState extends State<CursoCreate> {
   Widget _listProfessoresSelecionados() {
     final scrollController = ScrollController();
     return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxHeight: 200
-      ),
+      constraints: BoxConstraints(maxHeight: 200),
       child: Container(
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
@@ -335,37 +399,43 @@ class _CursoCreateState extends State<CursoCreate> {
         child: Scrollbar(
           thumbVisibility: true,
           controller: scrollController,
-          child: ListView.builder(
-            shrinkWrap: true,
-            physics: AlwaysScrollableScrollPhysics(),
-            itemCount: professoresSelecionados.length,
-            itemBuilder: (context, index) {
-              final professor = professoresSelecionados[index];
-              return Container(
-                margin: EdgeInsets.symmetric(vertical: 4),
-                clipBehavior: Clip.hardEdge,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Dismissible(
-                  key: Key(professor),
-                  direction: DismissDirection.endToStart,
-                  background: Container(
-                    color: Colors.red,
-                    alignment: Alignment.centerRight,
-                    padding: EdgeInsets.only(right: 16),
-                    child: Icon(Icons.delete, color: Colors.white),
+          child: Padding(
+            padding: EdgeInsets.only(right: 10),
+            child: ListView.builder(
+              shrinkWrap: true,
+              physics: AlwaysScrollableScrollPhysics(),
+              itemCount: professoresSelecionados.length,
+              itemBuilder: (context, index) {
+                final professor = professoresSelecionados[index];
+                return Container(
+                  margin: EdgeInsets.symmetric(vertical: 4),
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(4),
                   ),
-                  onDismissed: (_) {
-                    setState(() {
-                      professoresSelecionados.remove(professor);
-                    });
-                  },
-                  child: ListTile(dense: true, title: Text(professor)),
-                ),
-              );
-            },
+                  child: Dismissible(
+                    key: Key(professor),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      color: corRoxoMedio,
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.only(right: 16),
+                      child: Icon(Icons.delete, color: Colors.white),
+                    ),
+                    onDismissed: (_) {
+                      setState(() {
+                        professoresSelecionados.remove(professor);
+                      });
+                    },
+                    child: ListTile(
+                      dense: true,
+                      title: Text(professor),
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),
