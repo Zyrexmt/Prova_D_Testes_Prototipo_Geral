@@ -68,14 +68,17 @@ class _TeacherPageState extends State<TeacherPage> {
           });
         },
         child: ListTile(
-      contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          contentPadding: EdgeInsets.symmetric(
+            vertical: 5,
+            horizontal: 10,
+          ),
           title: Text(professor.nome, style: bold),
           subtitle: Text(professor.curso, style: bold),
         ),
       ),
     );
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return MainPage(
