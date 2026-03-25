@@ -330,7 +330,7 @@ class _CursoCreateState extends State<CursoCreate> {
                             onPressed:
                                 professoresSelecionados.length > 5
                                 ? null
-                                : Container.new,
+                                : () => modal(context),
                             icon: Icon(Icons.add_box_outlined),
                           ),
                         ],
@@ -384,6 +384,73 @@ class _CursoCreateState extends State<CursoCreate> {
       ),
     );
   }
+
+ void modal(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (_) {
+      return AlertDialog(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Professores'),
+            IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(Icons.close),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Busca',
+                suffixIcon: Icon(Icons.search),
+              ),
+            ),
+            SizedBox(height: 10),
+            _buildProfessorItem('Arnaldo'),
+            _buildProfessorItem('Bruna'),
+            _buildProfessorItem('Carla'),
+            _buildProfessorItem('Douglas'),
+            _buildProfessorItem('KG'),
+            _buildProfessorItem('Pablo'),
+            _buildProfessorItem('Thiago'),
+            _buildProfessorItem('Wellington'),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+Widget _buildProfessorItem(String name) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 5.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(name),
+        Row(
+          children: [
+            IconButton(
+              onPressed: () {
+              },
+              icon: Icon(Icons.remove),
+            ),
+            IconButton(
+              onPressed: () {
+              },
+              icon: Icon(Icons.add),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
 
   Widget _listProfessoresSelecionados() {
     final scrollController = ScrollController();
