@@ -6,6 +6,12 @@ import 'package:teste/global/variaveis.dart';
 import 'package:teste/widgets/bottomNav.dart';
 import 'package:teste/widgets/cursoPorcentagem.dart';
 
+class Cursos {
+  final String nome;
+  final int percent;
+  Cursos(this.nome, this.percent);
+}
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -16,13 +22,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int isListed = 0;
 
+  TextEditingController buscaController = TextEditingController();
   void modal() {
     showDialog(
       context: context,
       builder: (_) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.horizontal()
+            borderRadius: BorderRadiusGeometry.horizontal(),
           ),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -51,6 +58,33 @@ class _HomePageState extends State<HomePage> {
         );
       },
     );
+  }
+
+  List<Cursos> cursoListados = [];
+  List<Cursos> cursos = [
+    Cursos('Matematica', 90),
+    Cursos('Ingles', 50),
+    Cursos('Programacao', 10),
+    Cursos('Portugues', 60),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    cursoListados = cursos;
+  }
+
+  void _buscar() {
+    final texto = buscaController.text.toLowerCase();
+    setState(() {
+      if (texto.isEmpty) {
+        cursoListados = List.from(cursos);
+      } else {
+        cursoListados = cursos
+            .where((c) => c.nome.toLowerCase().contains(texto))
+            .toList();
+      }
+    });
   }
 
   @override
@@ -107,9 +141,13 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             children: [
               TextField(
+                controller: buscaController,
                 decoration: InputDecoration(
                   hintText: 'Busca',
-                  suffixIcon: Image.asset('assets/images/lupa.png'),
+                  suffixIcon: IconButton(
+                    icon: Image.asset('assets/images/lupa.png'),
+                    onPressed: _buscar,
+                  ),
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
@@ -120,125 +158,37 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 30),
               isListed == 0
                   ? Flexible(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceAround,
-                              children: [
-                                Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.start,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () => modal(),
-                                      child: _itemCursoCard(
-                                        'Matematica',
-                                        0.7,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => modal(),
-                                      child: _itemCursoCard(
-                                        'Matematica',
-                                        0.7,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => modal(),
-                                      child: _itemCursoCard(
-                                        'Matematica',
-                                        0.7,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => modal(),
-                                      child: _itemCursoCard(
-                                        'Matematica',
-                                        0.7,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => modal(),
-                                      child: _itemCursoCard(
-                                        'Matematica',
-                                        0.7,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => modal(),
-                                      child: _itemCursoCard(
-                                        'Matematica',
-                                        0.7,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                                Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.start,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () => modal(),
-                                      child: _itemCursoCard(
-                                        'Matematica',
-                                        0.7,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => modal(),
-                                      child: _itemCursoCard(
-                                        'Matematica',
-                                        0.7,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => modal(),
-                                      child: _itemCursoCard(
-                                        'Matematica',
-                                        0.7,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => modal(),
-                                      child: _itemCursoCard(
-                                        'Matematica',
-                                        0.7,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => modal(),
-                                      child: _itemCursoCard(
-                                        'Matematica',
-                                        0.7,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => modal(),
-                                      child: _itemCursoCard(
-                                        'Matematica',
-                                        0.7,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                      child: GridView.builder(
+                        gridDelegate:
+                            SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
                             ),
-                          ],
-                        ),
+                        itemCount: cursoListados.length,
+                        itemBuilder: (_, index) {
+                          final curso = cursoListados[index];
+                          return GestureDetector(
+                            onTap: () => modal(),
+                            child: _itemCursoCard(
+                              curso.nome,
+                              curso.percent / 100,
+                            ),
+                          );
+                        },
                       ),
                     )
                   : Flexible(
-                      child: Column(
-                        children: [
-                          GestureDetector(
+                      child: ListView.builder(
+                        itemCount: cursoListados.length,
+                        itemBuilder: (_, index) {
+                          final curso = cursoListados[index];
+                          return GestureDetector(
                             onTap: () => modal(),
-                            child: _itemCursoList('Matematica', 1.0),
-                          ),
-                        ],
+                            child: _itemCursoList(
+                              curso.nome,
+                              curso.percent / 100,
+                            ),
+                          );
+                        },
                       ),
                     ),
             ],
@@ -297,6 +247,7 @@ Widget _itemCursoCard(String nome, double porcentagem) {
 
 Widget _itemCursoList(String nome, double porcentagem) {
   return Container(
+    margin: EdgeInsets.only(top: 5),
     decoration: BoxDecoration(
       border: Border.all(color: Colors.black),
       borderRadius: BorderRadius.horizontal(),
@@ -332,7 +283,7 @@ Widget _itemCursoList(String nome, double porcentagem) {
           ),
           SizedBox(width: 25),
           Text(
-            'Matematica',
+            nome,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
