@@ -30,6 +30,26 @@ class _TeacherPageState extends State<TeacherPage> {
     Professor('Wellington', 'TI - Desenvolvimento de Sistemas'),
     Professor('Thiago', 'TI - Desenvolvimento de Sistemas'),
   ];
+  List<Professor> professoresFiltrados = [];
+
+  @override
+  void initState() {
+    super.initState();
+    professoresFiltrados = professores;
+  }
+
+  void _buscar() {
+    final texto = buscaController.text.toLowerCase();
+    setState(() {
+      professoresFiltrados = professores
+          .where(
+            (p) =>
+                p.nome.toLowerCase().contains(texto) ||
+                p.curso.toLowerCase().contains(texto),
+          )
+          .toList();
+    });
+  }
 
   Widget _listaProfessores() {
     final scollController = ScrollController();
@@ -40,21 +60,21 @@ class _TeacherPageState extends State<TeacherPage> {
         thumbVisibility: true,
         child: ListView.builder(
           physics: AlwaysScrollableScrollPhysics(),
-          itemCount: professores.length,
+          itemCount: professoresFiltrados.length,
           itemBuilder: (_, index) =>
-              _professorCard(professores[index]),
+              _professorCard(professoresFiltrados[index], index),
         ),
       ),
     );
   }
 
-  Widget _professorCard(Professor professor) {
+  Widget _professorCard(Professor professor, int index) {
     return Container(
       clipBehavior: Clip.hardEdge,
       margin: EdgeInsets.symmetric(vertical: 4, horizontal: 10),
       decoration: BoxDecoration(border: Border.all(color: corEscuro)),
       child: Dismissible(
-        key: Key(professor.nome),
+        key: Key('$index-${professor.nome}'),
         direction: DismissDirection.endToStart,
         background: Container(
           color: corRoxoMedio,
@@ -65,6 +85,7 @@ class _TeacherPageState extends State<TeacherPage> {
         onDismissed: (_) {
           setState(() {
             professores.remove(professor);
+            professoresFiltrados.remove(professor);
           });
         },
         child: ListTile(
@@ -78,7 +99,7 @@ class _TeacherPageState extends State<TeacherPage> {
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return MainPage(
@@ -111,7 +132,10 @@ class _TeacherPageState extends State<TeacherPage> {
                       borderRadius: BorderRadius.horizontal(),
                     ),
                     hintText: 'Busca',
-                    suffixIcon: Image.asset('assets/images/lupa.png'),
+                    suffixIcon: IconButton(
+                      icon: Image.asset('assets/images/lupa.png'),
+                      onPressed: _buscar,
+                    ),
                   ),
                 ),
 

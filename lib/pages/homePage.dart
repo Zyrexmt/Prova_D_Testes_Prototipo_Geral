@@ -21,6 +21,9 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (_) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadiusGeometry.horizontal()
+          ),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -314,7 +317,7 @@ Widget _itemCursoList(String nome, double porcentagem) {
                     painter: ArcoPorcentagem(
                       porcentagem: porcentagem,
                     ),
-                    size: Size(80, 980),
+                    size: Size(80, 80),
                   ),
                   Text(
                     '${(porcentagem * 100).toInt()}%',

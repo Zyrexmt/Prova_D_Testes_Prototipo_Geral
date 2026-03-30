@@ -9,6 +9,197 @@ class CursoCreate extends StatefulWidget {
 }
 
 class _CursoCreateState extends State<CursoCreate> {
+  TextEditingController buscaController = TextEditingController();
+
+  void modal() {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return StatefulBuilder(
+          builder: (context, setStateModal) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+              ),
+              child: Container(
+                width: 280,
+                constraints: BoxConstraints(maxHeight: 450),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 12,
+                      ),
+                      child: Row(
+                        mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Professores', style: black),
+                          GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: Text('X', style: black),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: corEscuro,
+                    ),
+
+                    Container(
+                      margin: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      height: 36,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: corEscuro),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: buscaController,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: corClara,
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.horizontal(),
+                                ),
+                                hintText: 'Busca',
+                                suffixIcon: Image.asset(
+                                  'assets/images/lupa.png',
+                                ),
+                                hintStyle: bold,
+                                contentPadding: EdgeInsets.symmetric(
+                                  vertical: 8,
+                                  horizontal: 8,
+                                ),
+                                isDense: true,
+                              ),
+                              onChanged: (value) {
+                                setStateModal(() {
+                                  filtrados = professores
+                                      .where(
+                                        (p) =>
+                                            p.toLowerCase().contains(
+                                              value.toLowerCase(),
+                                            ),
+                                      )
+                                      .toList();
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: filtrados.length,
+                        itemBuilder: (context, index) {
+                          final professor = filtrados[index];
+                          final selecionado = professoresSelecionados
+                              .contains(professor);
+
+                          return Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    professor,
+                                    style: regular,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    setStateModal(() {
+
+                                      if (selecionado) {
+                                        professoresSelecionados
+                                            .remove(professor);
+                                      } else {
+                                        professoresSelecionados.add(
+                                          professor,
+                                        );
+                                      }
+                                    });
+                                    setState(() {
+                                      
+                                    });
+                                  },
+                                  child: Container(
+                                    width: 28,
+                                    height: 28,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: corEscuro,
+                                      ),
+                                    ),
+                                    child: selecionado
+                                        ? Icon(Icons.add)
+                                        : Icon(Icons.remove),
+                                  ),
+                                ),
+
+                                SizedBox(width: 6),
+
+                                GestureDetector(
+                                  onTap: () {
+                                    setStateModal(() {
+                                      if (selecionado) {
+                                        professoresSelecionados
+                                            .remove(professor);
+                                      } else {
+                                        professoresSelecionados.add(
+                                          professor,
+                                        );
+                                      }
+                                    });
+                                    setState(() {
+                                      
+                                    });
+                                  },
+                                  child: Container(
+                                    width: 28,
+                                    height: 28,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: corEscuro,
+                                      ),
+                                    ),
+                                    child: selecionado
+                                        ? Icon(Icons.check)
+                                        : null,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 8,)
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   String nomeCompleto = '',
       nomeBreve = '',
       dataInicio = '',
@@ -39,17 +230,18 @@ class _CursoCreateState extends State<CursoCreate> {
     'Maria',
   ];
   List<String> professoresSelecionados = [
-    'ola',
-    'dois',
-    'tres',
-    'quarto',
-    'quarto',
   ];
-
+  List<String> filtrados = [];
   String? valorSelecionado;
   String? valorSelecionado2;
 
   bool visivel = false;
+
+  @override
+  void initState() {
+    super.initState();
+    filtrados = List.from(professores);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -330,7 +522,7 @@ class _CursoCreateState extends State<CursoCreate> {
                             onPressed:
                                 professoresSelecionados.length > 5
                                 ? null
-                                : () => modal(context),
+                                : modal,
                             icon: Icon(Icons.add_box_outlined),
                           ),
                         ],
@@ -385,73 +577,6 @@ class _CursoCreateState extends State<CursoCreate> {
     );
   }
 
- void modal(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (_) {
-      return AlertDialog(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Professores'),
-            IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: Icon(Icons.close),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Busca',
-                suffixIcon: Icon(Icons.search),
-              ),
-            ),
-            SizedBox(height: 10),
-            _buildProfessorItem('Arnaldo'),
-            _buildProfessorItem('Bruna'),
-            _buildProfessorItem('Carla'),
-            _buildProfessorItem('Douglas'),
-            _buildProfessorItem('KG'),
-            _buildProfessorItem('Pablo'),
-            _buildProfessorItem('Thiago'),
-            _buildProfessorItem('Wellington'),
-          ],
-        ),
-      );
-    },
-  );
-}
-
-Widget _buildProfessorItem(String name) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 5.0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(name),
-        Row(
-          children: [
-            IconButton(
-              onPressed: () {
-              },
-              icon: Icon(Icons.remove),
-            ),
-            IconButton(
-              onPressed: () {
-              },
-              icon: Icon(Icons.add),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-
   Widget _listProfessoresSelecionados() {
     final scrollController = ScrollController();
     return ConstrainedBox(
@@ -505,6 +630,45 @@ Widget _buildProfessorItem(String name) {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _selecionarProfessores() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('Professor', style: regular),
+          Row(
+            children: [
+              IconButton(
+                onPressed: () {},
+                icon: Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: corEscuro),
+                  ),
+                  child: Icon(Icons.add),
+                ),
+              ),
+
+              IconButton(
+                onPressed: () {},
+                icon: Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: corEscuro),
+                  ),
+                  child: Icon(Icons.youtube_searched_for),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
