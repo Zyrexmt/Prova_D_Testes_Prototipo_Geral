@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teste/pages/cursoCreate.dart';
 import 'package:teste/pages/homePage.dart';
 import 'package:teste/pages/professorCreate.dart';
+import 'package:teste/pages/reportsPage.dart';
 import 'package:teste/pages/teacherPage.dart';
 
 class AppController extends StatelessWidget {
@@ -20,6 +21,7 @@ class AppController extends StatelessWidget {
         '/teachers': (context) => const TeacherPage(),
         '/curso' : (context) => const CursoCreate(),
         '/professorCriar': (context) => const ProfessorCreate(),
+        '/reports': (context) => const ReportPage()
         
         
 
