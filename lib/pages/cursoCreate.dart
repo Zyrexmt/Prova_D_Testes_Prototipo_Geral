@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teste/global/variaveis.dart';
+import 'package:teste/services/data_service.dart';
 
 class CursoCreate extends StatefulWidget {
   const CursoCreate({super.key});
@@ -10,6 +11,65 @@ class CursoCreate extends StatefulWidget {
 
 class _CursoCreateState extends State<CursoCreate> {
   TextEditingController buscaController = TextEditingController();
+
+  String nomeCompleto = '',
+      nomeBreve = '',
+      dataInicio = '',
+      dataFim = '',
+      descricaoCurso = '';
+
+  TextEditingController nomeCompletoController =
+          TextEditingController(),
+      nomeBreveController = TextEditingController(),
+      dataInicioController = TextEditingController(),
+      dataFimController = TextEditingController(),
+      descricaoCursoController = TextEditingController();
+
+  List<Map<String, dynamic>> get categorias => DataService.categorias;
+  List<Map<String, dynamic>> get professores =>
+      DataService.professores;
+  List<Map<String, dynamic>> filtrados = [];
+  List<Map<String, dynamic>> professoresSelecionados = [];
+  List<String> formatos = [
+    'Atividade Única',
+    'Formato Social',
+    'Formato tópicos',
+    'Formato semanal',
+  ];
+
+  Map<String, dynamic>? categoriaSelecionada;
+  String? formatoSelecionado;
+  bool visivel = false;
+
+  @override
+  void initState() {
+    super.initState();
+    filtrados = List.from(professores);
+  }
+
+  void _salvar() async {
+    final novoCurso = {
+      'id': DateTime.now().millisecondsSinceEpoch,
+      "nomeCompleto": nomeCompletoController.text,
+      "nomeBreve": nomeBreveController.text,
+      "categoria_id": categoriaSelecionada?['id'],
+      "visivel": visivel,
+      "dataInicio": dataInicioController.text,
+      "dataFim": dataFimController.text,
+      "descricao": descricaoCursoController.text,
+      "formato": formatoSelecionado,
+      "professores_id": professoresSelecionados
+          .map((p) => p['id'])
+          .toList(),
+      "porcentagem": 0.0,
+    };
+
+    await DataService.adicionarCurso(novoCurso);
+
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/home');
+    }
+  }
 
   void modal() {
     showDialog(
@@ -86,8 +146,9 @@ class _CursoCreateState extends State<CursoCreate> {
                                 setStateModal(() {
                                   filtrados = professores
                                       .where(
-                                        (p) =>
-                                            p.toLowerCase().contains(
+                                        (p) => p['nome']
+                                            .toLowerCase()
+                                            .contains(
                                               value.toLowerCase(),
                                             ),
                                       )
@@ -117,14 +178,13 @@ class _CursoCreateState extends State<CursoCreate> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    professor,
+                                    professor['nome'],
                                     style: regular,
                                   ),
                                 ),
                                 GestureDetector(
                                   onTap: () {
                                     setStateModal(() {
-
                                       if (selecionado) {
                                         professoresSelecionados
                                             .remove(professor);
@@ -134,9 +194,7 @@ class _CursoCreateState extends State<CursoCreate> {
                                         );
                                       }
                                     });
-                                    setState(() {
-                                      
-                                    });
+                                    setState(() {});
                                   },
                                   child: Container(
                                     width: 28,
@@ -166,9 +224,7 @@ class _CursoCreateState extends State<CursoCreate> {
                                         );
                                       }
                                     });
-                                    setState(() {
-                                      
-                                    });
+                                    setState(() {});
                                   },
                                   child: Container(
                                     width: 28,
@@ -189,7 +245,7 @@ class _CursoCreateState extends State<CursoCreate> {
                         },
                       ),
                     ),
-                    SizedBox(height: 8,)
+                    SizedBox(height: 8),
                   ],
                 ),
               ),
@@ -198,49 +254,6 @@ class _CursoCreateState extends State<CursoCreate> {
         );
       },
     );
-  }
-
-  String nomeCompleto = '',
-      nomeBreve = '',
-      dataInicio = '',
-      dataFim = '',
-      descricaoCurso = '',
-      formato = '';
-  TextEditingController nomeCompletoController =
-          TextEditingController(),
-      nomeBreveController = TextEditingController(),
-      dataInicioController = TextEditingController(),
-      dataFimController = TextEditingController(),
-      descricaoCursoController = TextEditingController(),
-      formatoController = TextEditingController();
-
-  List<String> opcoes = ['Opcao 1', 'Opcao 2', 'Opcao 3'];
-  List<String> formatos = [
-    'Atividade Única',
-    'Formato Social',
-    'Formato tópicos',
-    'Fomarto semanal',
-  ];
-
-  List<String> professores = [
-    'Douglas',
-    'KG',
-    'Wellington',
-    'Arnaldo',
-    'Maria',
-  ];
-  List<String> professoresSelecionados = [
-  ];
-  List<String> filtrados = [];
-  String? valorSelecionado;
-  String? valorSelecionado2;
-
-  bool visivel = false;
-
-  @override
-  void initState() {
-    super.initState();
-    filtrados = List.from(professores);
   }
 
   @override
@@ -318,16 +331,18 @@ class _CursoCreateState extends State<CursoCreate> {
                                       BorderRadius.horizontal(),
                                 ),
                               ),
-                              value: valorSelecionado,
-                              items: opcoes.map((op) {
-                                return DropdownMenuItem<String>(
-                                  child: Text(op),
-                                  value: op,
+                              value: categoriaSelecionada,
+                              items: categorias.map((cat) {
+                                return DropdownMenuItem<
+                                  Map<String, dynamic>
+                                >(
+                                  value: cat,
+                                  child: Text(cat['nome']),
                                 );
                               }).toList(),
                               onChanged: (valor) {
                                 setState(() {
-                                  valorSelecionado = valor;
+                                  categoriaSelecionada = valor;
                                 });
                               },
                             ),
@@ -493,16 +508,16 @@ class _CursoCreateState extends State<CursoCreate> {
                             borderRadius: BorderRadius.horizontal(),
                           ),
                         ),
-                        value: valorSelecionado2,
+                        value: formatoSelecionado,
                         items: formatos.map((form) {
                           return DropdownMenuItem<String>(
-                            child: Text(form),
                             value: form,
+                            child: Text(form),
                           );
                         }).toList(),
                         onChanged: (valor) {
                           setState(() {
-                            valorSelecionado2 = valor;
+                            formatoSelecionado = valor;
                           });
                         },
                       ),
@@ -537,7 +552,7 @@ class _CursoCreateState extends State<CursoCreate> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed: _salvar,
                       style: TextButton.styleFrom(
                         backgroundColor: corRoxoEscuro,
                         foregroundColor: corClara,
@@ -607,7 +622,7 @@ class _CursoCreateState extends State<CursoCreate> {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Dismissible(
-                    key: Key(professor),
+                    key: Key(professor['nome']),
                     direction: DismissDirection.endToStart,
                     background: Container(
                       color: corRoxoMedio,
@@ -622,7 +637,7 @@ class _CursoCreateState extends State<CursoCreate> {
                     },
                     child: ListTile(
                       dense: true,
-                      title: Text(professor),
+                      title: Text(professor['nome']),
                     ),
                   ),
                 );

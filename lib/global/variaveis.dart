@@ -11,3 +11,5 @@ final regular = TextStyle(fontSize: 16);
 final bold = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
 
 final black = TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
+
+

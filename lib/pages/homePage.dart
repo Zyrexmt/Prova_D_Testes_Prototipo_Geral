@@ -3,13 +3,15 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:teste/appWidget.dart';
 import 'package:teste/global/variaveis.dart';
+import 'package:teste/services/data_service.dart';
 import 'package:teste/widgets/bottomNav.dart';
 import 'package:teste/widgets/cursoPorcentagem.dart';
 
 class Cursos {
   final String nome;
   final int percent;
-  Cursos(this.nome, this.percent);
+  final Map<String, dynamic> cursoData;
+  Cursos(this.nome, this.percent, this.cursoData);
 }
 
 class HomePage extends StatefulWidget {
@@ -20,10 +22,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool isLoading = true;
   int isListed = 0;
 
   TextEditingController buscaController = TextEditingController();
-  void modal() {
+  void modal(Map<String, dynamic> cursoData) {
     showDialog(
       context: context,
       builder: (_) {
@@ -45,14 +48,19 @@ class _HomePageState extends State<HomePage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Curso:\nMatematica'),
+              Text('Curso: ${cursoData['nomeCompleto'] ?? 'N/A'}'),
               SizedBox(height: 10),
-              Text('Descricao:\nCursos de calculos'),
+              Text('Descrição: ${cursoData['descricao'] ?? 'N/A'}'),
               SizedBox(height: 10),
-              Text('Incritos:\n10'),
+              Text('Inscritos:\n${cursoData['inscritos'] ?? 'N/A'}'),
               SizedBox(height: 10),
-              Text('Ativos:\n8'),
+              Text('Ativos:\n${cursoData['ativos'] ?? 'N/A'}'),
               SizedBox(height: 10),
+              Text('Formato: ${cursoData['formato'] ?? 'N/A'}'),
+              SizedBox(height: 10),
+              Text('Início: ${cursoData['dataInicio'] ?? 'N/A'}'),
+              
+              
             ],
           ),
         );
@@ -61,17 +69,40 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Cursos> cursoListados = [];
-  List<Cursos> cursos = [
-    Cursos('Matematica', 90),
-    Cursos('Ingles', 50),
-    Cursos('Programacao', 10),
-    Cursos('Portugues', 60),
-  ];
+  List<Cursos> cursos = [];
 
   @override
   void initState() {
     super.initState();
-    cursoListados = cursos;
+    _carregarDados();
+  }
+
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   _carregarDados();
+  // }
+
+  Future<void> _carregarDados() async {
+    await DataService.carregar();
+
+    setState(() {
+      cursos = DataService.cursos
+          .where((c) => c['visivel'] == true)
+          .map((cursoData) {
+            final nome =
+                cursoData['nomeCompleto']?.toString() ?? 'Sem nome';
+            final percent = ((cursoData['porcentagem'] ?? 0) * 100)
+                .round()
+                .clamp(0, 100);
+            return Cursos(nome, percent, cursoData);
+          })
+          .where((c) => c.nome.isNotEmpty)
+          .toList();
+
+      cursoListados = List.from(cursos);
+      isLoading = false;
+    });
   }
 
   void _buscar() {
@@ -137,7 +168,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsetsGeometry.all(20),
+          padding: EdgeInsets.all(20),
           child: Column(
             children: [
               TextField(
@@ -154,8 +185,10 @@ class _HomePageState extends State<HomePage> {
                     borderRadius: BorderRadius.horizontal(),
                   ),
                 ),
+                onSubmitted: (_) => _buscar(),
               ),
               SizedBox(height: 30),
+
               isListed == 0
                   ? Flexible(
                       child: GridView.builder(
@@ -167,7 +200,7 @@ class _HomePageState extends State<HomePage> {
                         itemBuilder: (_, index) {
                           final curso = cursoListados[index];
                           return GestureDetector(
-                            onTap: () => modal(),
+                            onTap: () => modal(curso.cursoData),
                             child: _itemCursoCard(
                               curso.nome,
                               curso.percent / 100,
@@ -182,7 +215,7 @@ class _HomePageState extends State<HomePage> {
                         itemBuilder: (_, index) {
                           final curso = cursoListados[index];
                           return GestureDetector(
-                            onTap: () => modal(),
+                            onTap: () => modal(curso.cursoData),
                             child: _itemCursoList(
                               curso.nome,
                               curso.percent / 100,

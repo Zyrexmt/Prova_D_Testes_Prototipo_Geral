@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teste/global/variaveis.dart';
+import 'package:teste/services/data_service.dart';
 import 'package:teste/widgets/bottomNav.dart';
-
-class Professor {
-  final String nome;
-  final String curso;
-  Professor(this.nome, this.curso);
-}
 
 class TeacherPage extends StatefulWidget {
   const TeacherPage({super.key});
@@ -16,38 +11,37 @@ class TeacherPage extends StatefulWidget {
 }
 
 class _TeacherPageState extends State<TeacherPage> {
-  String busca = '';
-
   TextEditingController buscaController = TextEditingController();
 
-  final List<Professor> professores = [
-    Professor('Douglas', 'TI - Desenvolvimento de Sistemas'),
-    Professor('KG', 'TI - Desenvolvimento de Sistemas'),
-    Professor('Wellington', 'TI - Desenvolvimento de Sistemas'),
-    Professor('Thiago', 'TI - Desenvolvimento de Sistemas'),
-    Professor('Douglas', 'TI - Desenvolvimento de Sistemas'),
-    Professor('KG', 'TI - Desenvolvimento de Sistemas'),
-    Professor('Wellington', 'TI - Desenvolvimento de Sistemas'),
-    Professor('Thiago', 'TI - Desenvolvimento de Sistemas'),
-  ];
-  List<Professor> professoresFiltrados = [];
+  List<Map<String, dynamic>> professores = [];
+  List<Map<String, dynamic>> professoresFiltrados = [];
 
   @override
   void initState() {
     super.initState();
-    professoresFiltrados = professores;
+    _carregarDados();
+  }
+
+  Future<void> _carregarDados() async {
+    await DataService.carregar();
+    setState(() {
+      professores = List.from(DataService.professores);
+      professoresFiltrados = List.from(professores);
+    });
   }
 
   void _buscar() {
     final texto = buscaController.text.toLowerCase();
     setState(() {
-      professoresFiltrados = professores
-          .where(
-            (p) =>
-                p.nome.toLowerCase().contains(texto) ||
-                p.curso.toLowerCase().contains(texto),
-          )
-          .toList();
+      professoresFiltrados = texto.isEmpty
+          ? List.from(professores)
+          : professores
+                .where(
+                  (p) => p['nome'].toString().toLowerCase().contains(
+                    texto,
+                  ),
+                )
+                .toList();
     });
   }
 
@@ -62,43 +56,90 @@ class _TeacherPageState extends State<TeacherPage> {
           physics: AlwaysScrollableScrollPhysics(),
           itemCount: professoresFiltrados.length,
           itemBuilder: (_, index) =>
-              _professorCard(professoresFiltrados[index], index),
+              _professorCard(professoresFiltrados[index]),
         ),
       ),
     );
   }
 
-  Widget _professorCard(Professor professor, int index) {
-    return Container(
-      clipBehavior: Clip.hardEdge,
-      margin: EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-      decoration: BoxDecoration(border: Border.all(color: corEscuro)),
-      child: Dismissible(
-        key: Key('$index-${professor.nome}'),
-        direction: DismissDirection.endToStart,
-        background: Container(
-          color: corRoxoMedio,
-          alignment: Alignment.centerRight,
-          padding: EdgeInsets.only(right: 16),
-          child: Icon(Icons.delete, color: corClara),
-        ),
-        onDismissed: (_) {
-          setState(() {
-            professores.remove(professor);
-            professoresFiltrados.remove(professor);
-          });
-        },
-        child: ListTile(
-          contentPadding: EdgeInsets.symmetric(
-            vertical: 5,
-            horizontal: 10,
+  Widget _professorCard(Map<String, dynamic> professor) {
+    bool deletando = false;
+    return StatefulBuilder(
+      builder: (context, setStateCard) {
+        return GestureDetector(
+          onLongPress: () => setStateCard(() => deletando = true),
+          onTap: deletando
+              ? () => setStateCard(() => deletando = false)
+              : null,
+          child: Container(
+            clipBehavior: Clip.hardEdge,
+            margin: EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+            decoration: BoxDecoration(
+              border: Border.all(color: corEscuro),
+            ),
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: ListTile(
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 5,
+                        horizontal: 10,
+                      ),
+                      title: Text(professor['nome'] ?? '', style: bold),
+                      subtitle: Text(
+                        professor['descricao'] ?? '',
+                        style: bold,
+                      ),
+                    ),
+                  ),
+                  if (deletando)
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          professores.remove(professor);
+                          professoresFiltrados.remove(professor);
+                        });
+                        DataService.removerProfessor(professor);
+                      },
+                      child: Container(
+                        width: 70,
+                        color: corRoxoMedio,
+                        alignment: Alignment.center,
+                        child: Icon(Icons.delete, color: corClara, size: 30,),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
-          title: Text(professor.nome, style: bold),
-          subtitle: Text(professor.curso, style: bold),
-        ),
-      ),
+        );
+      },
     );
   }
+
+  // deletando
+  //             ? GestureDetector(
+  //                   onTap: () {
+  //                     setState(() {
+  //                       professores.remove(professor);
+  //                       professoresFiltrados.remove(professor);
+  //                     });
+  //                     DataService.removerProfessor(professor);
+  //                   },
+  //                   child: Container(
+  //                     color: corRoxoMedio,
+  //                     child: ListTile(
+  //                       contentPadding: EdgeInsets.symmetric(
+  //                         vertical: 5,
+  //                         horizontal: 10,
+  //                       ),
+  //                       title: Text(professor['nome'] ?? '', style: bold),
+  //                       trailing: Icon(Icons.delete, color: corClara),
+  //                     ),
+  //                   ),
+  //                 )
 
   @override
   Widget build(BuildContext context) {
