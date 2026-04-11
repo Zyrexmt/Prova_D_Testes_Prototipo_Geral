@@ -63,7 +63,60 @@ class _CursoCreateState extends State<CursoCreate> {
           .toList(),
       "porcentagem": 0.0,
     };
-
+    if (nomeCompletoController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Nome completo é obrigatório')),
+      );
+      return;
+    }
+    if (nomeCompletoController.text.length < 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Nome completo precisa ter no mínimo 10 caracteres',
+          ),
+        ),
+      );
+      return;
+    }
+    if (DateTime.parse(dataInicio).isBefore(DateTime.now())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Data de ínicio não pode ser anterior ao dia atual',
+          ),
+        ),
+      );
+      return;
+    }
+    if (DateTime.parse(
+      dataFim,
+    ).isBefore(DateTime.parse(dataInicio))) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Data de fim não pode ser anterior ao data de início',
+          ),
+        ),
+      );
+      return;
+    }
+    if (professoresSelecionados.length > 5) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Os cursos devem possuir no máximo 5 professsores',
+          ),
+        ),
+      );
+      return;
+    }
+    if (professoresSelecionados.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Selecione ao menos um professor')),
+      );
+      return;
+    }
     await DataService.adicionarCurso(novoCurso);
 
     if (mounted) {
@@ -188,7 +241,7 @@ class _CursoCreateState extends State<CursoCreate> {
                                       if (selecionado) {
                                         professoresSelecionados
                                             .remove(professor);
-                                      } else {
+                                      } else if (professoresSelecionados.length < 5){
                                         professoresSelecionados.add(
                                           professor,
                                         );
@@ -286,12 +339,14 @@ class _CursoCreateState extends State<CursoCreate> {
                   child: Text('Nome completo', style: regular),
                 ),
                 TextField(
+                  maxLength: 50,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.horizontal(),
                     ),
                     filled: true,
                     fillColor: Colors.white,
+                    
                   ),
                   controller: nomeCompletoController,
                 ),
@@ -302,6 +357,7 @@ class _CursoCreateState extends State<CursoCreate> {
                   child: Text('Nome Breve', style: regular),
                 ),
                 TextField(
+                  maxLength: 15,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.horizontal(),
@@ -481,6 +537,7 @@ class _CursoCreateState extends State<CursoCreate> {
                   child: Text('Sumário do Curso', style: regular),
                 ),
                 TextField(
+                  maxLength: 200,
                   controller: descricaoCursoController,
                   maxLines: null,
                   minLines: 3,

@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:teste/appWidget.dart';
 import 'package:teste/global/variaveis.dart';
 import 'package:teste/services/data_service.dart';
@@ -48,19 +49,23 @@ class _HomePageState extends State<HomePage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Curso: ${cursoData['nomeCompleto'] ?? 'N/A'}'),
+              Text('Curso:\n${cursoData['nomeCompleto'] ?? 'N/A'}'),
               SizedBox(height: 10),
-              Text('Descrição: ${cursoData['descricao'] ?? 'N/A'}'),
+              Text('Descrição:\n${cursoData['descricao'] ?? 'N/A'}'),
               SizedBox(height: 10),
-              Text('Inscritos:\n${cursoData['inscritos'] ?? 'N/A'}'),
+              Text(
+                'Categoria:\n${cursoData['categoria_id'] ?? 'N/A'}',
+              ),
               SizedBox(height: 10),
-              Text('Ativos:\n${cursoData['ativos'] ?? 'N/A'}'),
+              Text('Formato:\n${cursoData['formato'] ?? 'N/A'}'),
               SizedBox(height: 10),
-              Text('Formato: ${cursoData['formato'] ?? 'N/A'}'),
+              Text('Início:\n${cursoData['dataInicio'] ?? 'N/A'}'),
               SizedBox(height: 10),
-              Text('Início: ${cursoData['dataInicio'] ?? 'N/A'}'),
-              
-              
+              Text('Fim:\n${cursoData['dataFim'] ?? 'N/A'}'),
+              SizedBox(height: 10),
+              Text(
+                'Professores:\n${DataService.getProfessoresDoCurso(cursoData).map((p) => p['nome']).join(', ')}',
+              ),
             ],
           ),
         );
@@ -76,12 +81,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _carregarDados();
   }
-
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   _carregarDados();
-  // }
 
   Future<void> _carregarDados() async {
     await DataService.carregar();
@@ -110,6 +109,13 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       if (texto.isEmpty) {
         cursoListados = List.from(cursos);
+      } else if (texto.contains(RegExp(r'[@#$]'))) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Caracteres inválidos não são aceitos'),
+          ),
+        );
+        return;
       } else {
         cursoListados = cursos
             .where((c) => c.nome.toLowerCase().contains(texto))
@@ -140,7 +146,6 @@ class _HomePageState extends State<HomePage> {
         actions: [
           InkWell(
             onTap: () {
-              //Navigator.of(context).pushReplacementNamed('/teachers');
               setState(() {
                 isListed = 0;
               });
@@ -153,7 +158,6 @@ class _HomePageState extends State<HomePage> {
           SizedBox(width: 5),
           InkWell(
             onTap: () {
-              //Navigator.of(context).pushReplacementNamed('/teachers');
               setState(() {
                 isListed = 1;
               });

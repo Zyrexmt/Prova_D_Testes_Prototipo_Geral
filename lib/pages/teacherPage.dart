@@ -33,15 +33,23 @@ class _TeacherPageState extends State<TeacherPage> {
   void _buscar() {
     final texto = buscaController.text.toLowerCase();
     setState(() {
-      professoresFiltrados = texto.isEmpty
-          ? List.from(professores)
-          : professores
-                .where(
-                  (p) => p['nome'].toString().toLowerCase().contains(
-                    texto,
-                  ),
-                )
-                .toList();
+      if (texto.isEmpty) {
+        professoresFiltrados = List.from(professores);
+      } else if (texto.contains(RegExp(r'[@#$]'))) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Caracteres inválidos não são aceitos'),
+          ),
+        );
+        return;
+      } else {
+        professoresFiltrados = professores
+            .where(
+              (p) =>
+                  p['nome'].toString().toLowerCase().contains(texto),
+            )
+            .toList();
+      }
     });
   }
 
@@ -87,7 +95,10 @@ class _TeacherPageState extends State<TeacherPage> {
                         vertical: 5,
                         horizontal: 10,
                       ),
-                      title: Text(professor['nome'] ?? '', style: bold),
+                      title: Text(
+                        professor['nome'] ?? '',
+                        style: bold,
+                      ),
                       subtitle: Text(
                         professor['descricao'] ?? '',
                         style: bold,
@@ -107,7 +118,11 @@ class _TeacherPageState extends State<TeacherPage> {
                         width: 70,
                         color: corRoxoMedio,
                         alignment: Alignment.center,
-                        child: Icon(Icons.delete, color: corClara, size: 30,),
+                        child: Icon(
+                          Icons.delete,
+                          color: corClara,
+                          size: 30,
+                        ),
                       ),
                     ),
                 ],
