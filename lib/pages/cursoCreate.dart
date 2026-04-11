@@ -12,12 +12,6 @@ class CursoCreate extends StatefulWidget {
 class _CursoCreateState extends State<CursoCreate> {
   TextEditingController buscaController = TextEditingController();
 
-  String nomeCompleto = '',
-      nomeBreve = '',
-      dataInicio = '',
-      dataFim = '',
-      descricaoCurso = '';
-
   TextEditingController nomeCompletoController =
           TextEditingController(),
       nomeBreveController = TextEditingController(),
@@ -79,7 +73,7 @@ class _CursoCreateState extends State<CursoCreate> {
       );
       return;
     }
-    if (DateTime.parse(dataInicio).isBefore(DateTime.now())) {
+    if (DateTime.parse(dataInicioController.text).isBefore(DateTime.now())) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -90,8 +84,8 @@ class _CursoCreateState extends State<CursoCreate> {
       return;
     }
     if (DateTime.parse(
-      dataFim,
-    ).isBefore(DateTime.parse(dataInicio))) {
+      dataFimController.text,
+    ).isBefore(DateTime.parse(dataInicioController.text))) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -472,7 +466,7 @@ class _CursoCreateState extends State<CursoCreate> {
                                       .toString()
                                       .split(' ')
                                       .first;
-                                  dataInicio = data.toString();
+                                  dataInicioController.text = data.toString();
                                   setState(() {});
                                 }
                               },
@@ -519,7 +513,7 @@ class _CursoCreateState extends State<CursoCreate> {
                                       .toString()
                                       .split(' ')
                                       .first;
-                                  dataFim = data.toString();
+                                  dataFimController.text = data.toString();
                                   setState(() {});
                                 }
                               },

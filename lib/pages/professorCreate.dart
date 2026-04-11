@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:teste/global/variaveis.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:teste/services/data_service.dart';
 
 class ProfessorCreate extends StatefulWidget {
   const ProfessorCreate({super.key});
@@ -11,18 +13,59 @@ class ProfessorCreate extends StatefulWidget {
 }
 
 class _ProfessorCreateState extends State<ProfessorCreate> {
-  String nome = '',
-      email = '',
-      telefone = '',
-      descricao = '',
-      imagem = '';
-
   File? imagemSelecionada;
   TextEditingController nomeController = TextEditingController(),
       emailController = TextEditingController(),
-      telefoneController = TextEditingController(),
       descricaoController = TextEditingController(),
       imagemController = TextEditingController();
+  MaskedTextController telefoneController = MaskedTextController(
+    mask: '(00) 00000-0000',
+  );
+
+  void _salvar() async {
+    final novoProfessor = {
+      'id': DateTime.now().millisecondsSinceEpoch,
+      'nome': nomeController.text,
+      'email': emailController.text,
+      'telefone': telefoneController.text,
+      'descricao': descricaoController.text,
+    };
+    if (nomeController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Nome é obrigatório')));
+      return;
+    }
+    if (emailController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Email é obrigatório')));
+      return;
+    }
+    if (telefoneController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Telefone é obrigatório')),
+      );
+      return;
+    }
+    if (descricaoController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Descrição é obrigatório')),
+      );
+      return;
+    }
+    if (!emailController.text.contains('@')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Formato inválido do E-mail')),
+      );
+      return;
+    }
+    await DataService.adicionarProfessor(novoProfessor);
+
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/teachers');
+    }
+  }
 
   Widget _campoImagem() {
     return Column(
@@ -121,6 +164,7 @@ class _ProfessorCreateState extends State<ProfessorCreate> {
                       Text('Nome', style: regular),
                       SizedBox(height: 4),
                       TextField(
+                        maxLength: 60,
                         controller: nomeController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
@@ -150,12 +194,14 @@ class _ProfessorCreateState extends State<ProfessorCreate> {
                       SizedBox(height: 4),
                       TextField(
                         controller: telefoneController,
+                        keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.horizontal(),
                           ),
                           fillColor: corClara,
                           filled: true,
+                          hintText: '(99) 99999-9999',
                         ),
                       ),
                       SizedBox(height: 10),
@@ -190,7 +236,7 @@ class _ProfessorCreateState extends State<ProfessorCreate> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: _salvar,
                     style: TextButton.styleFrom(
                       backgroundColor: corRoxoEscuro,
                       foregroundColor: corClara,
