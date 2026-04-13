@@ -54,7 +54,7 @@ class _ProfessorCreateState extends State<ProfessorCreate> {
       );
       return;
     }
-    if (!emailController.text.contains('@')) {
+    if (!RegExp(r'^[a-z0-9.]+@[a-z0-9]+(\.[a-z]{2,})+$').hasMatch(emailController.text.toLowerCase())) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Formato inválido do E-mail')),
       );
